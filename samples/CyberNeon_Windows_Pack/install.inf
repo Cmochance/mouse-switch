@@ -1,0 +1,26 @@
+; CyberNeon Windows Cursor Theme - Sample Install Script
+[Version]
+signature="$CHICAGO$"
+
+[DefaultInstall]
+CopyFiles = Scheme.Cur
+AddReg    = Scheme.Reg
+
+[DestinationDirs]
+Scheme.Cur = 10,"%CUR_DIR%"
+
+[Scheme.Reg]
+HKCU,"Control Panel\Cursors\Schemes","%SCHEME_NAME%",0x00020000,"%10%\%CUR_DIR%\%pointer%,%10%\%CUR_DIR%\%help%,%10%\%CUR_DIR%\%work%,%10%\%CUR_DIR%\%busy%,%10%\%CUR_DIR%\%cross%,%10%\%CUR_DIR%\%Text%,%10%\%CUR_DIR%\%Hand%,%10%\%CUR_DIR%\%unavailiable%,%10%\%CUR_DIR%\%Vert%,%10%\%CUR_DIR%\%Horz%,%10%\%CUR_DIR%\%Dgn1%,%10%\%CUR_DIR%\%Dgn2%,%10%\%CUR_DIR%\%move%,%10%\%CUR_DIR%\%alternate%,%10%\%CUR_DIR%\%link%"
+
+[Strings]
+CUR_DIR       = "Cursors\CyberNeon"
+SCHEME_NAME   = "CyberNeon 赛博霓虹 (Win示例包)"
+pointer       = "normal.cur"
+work          = "work.ani"
+busy          = "busy.ani"
+cross         = "cross.cur"
+Text          = "ibeam.cur"
+unavailiable  = "unavail.cur"
+Vert          = "vert.cur"
+Horz          = "horz.cur"
+link          = "link.cur"
