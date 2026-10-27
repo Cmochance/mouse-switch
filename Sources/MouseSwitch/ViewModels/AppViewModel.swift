@@ -29,7 +29,6 @@ final class AppViewModel: ObservableObject {
 
     init() {
         self.keepAliveOnWake = UserDefaults.standard.object(forKey: "keepAliveOnWake") as? Bool ?? true
-        SkyLightCursorBridge.shared.ensureSystemDefaultBackup()
         loadSavedThemes()
 
         if themes.isEmpty {
@@ -44,6 +43,11 @@ final class AppViewModel: ObservableObject {
         }
 
         setupWakeObservers()
+
+        // 系统默认光标备份涉及文件 I/O 与 SkyLight 调用，放入后台线程，避免阻塞主线程
+        Task.detached {
+            SkyLightCursorBridge.shared.ensureSystemDefaultBackup()
+        }
     }
 
     var selectedTheme: CursorTheme? {
@@ -137,18 +141,25 @@ final class AppViewModel: ObservableObject {
         if urls.count > 1 && urls.allSatisfy({ ["cur", "ani", "ico"].contains($0.pathExtension.lowercased()) }) {
             let folderName = urls.first?.deletingLastPathComponent().lastPathComponent ?? "Windows 导入光标组"
             var combined = CursorTheme(name: folderName, author: "Windows Batch Import")
+            var failedFiles: [String] = []
             for url in urls {
-                if let parsed = try? WinCursorParser.parse(fileURL: url) {
+                do {
+                    let parsed = try WinCursorParser.parse(fileURL: url)
                     let stem = url.deletingPathExtension().lastPathComponent
                     let role = CursorRole.match(identifierOrFilename: stem) ?? .arrow
                     combined.setCursor(parsed, for: role)
+                } catch {
+                    failedFiles.append(url.lastPathComponent)
                 }
             }
             if combined.assignedRolesCount > 0 {
                 themes.append(combined)
                 saveThemeToDisk(combined)
                 selectedThemeID = combined.id
-                setStatus("成功合并导入 \(combined.assignedRolesCount) 个 Windows 光标文件！", isError: false)
+                let msg = failedFiles.isEmpty
+                    ? "成功合并导入 \(combined.assignedRolesCount) 个 Windows 光标文件！"
+                    : "合并导入 \(combined.assignedRolesCount) 个光标，失败 \(failedFiles.count) 个：\(failedFiles.joined(separator: ", "))"
+                setStatus(msg, isError: !failedFiles.isEmpty)
                 return
             }
         }

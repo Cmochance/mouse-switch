@@ -3,7 +3,7 @@ import CoreGraphics
 import AppKit
 
 /// Standard cursor roles bridging Windows cursor types and macOS CoreGraphics identifiers.
-enum CursorRole: String, CaseIterable, Codable, Identifiable {
+public enum CursorRole: String, CaseIterable, Codable, Identifiable {
     case arrow = "Arrow"
     case ibeam = "IBeam"
     case hand = "Hand"
@@ -20,7 +20,7 @@ enum CursorRole: String, CaseIterable, Codable, Identifiable {
     case upArrow = "UpArrow"
     case pen = "NWPen"
 
-    var id: String { rawValue }
+    public var id: String { rawValue }
 
     var displayName: String {
         switch self {
@@ -307,8 +307,8 @@ enum CursorRole: String, CaseIterable, Codable, Identifiable {
 }
 
 /// Represents a decoded cursor asset (from `.cur`, `.ani`, or `.cape`)
-struct ParsedCursor: Identifiable, Codable {
-    var id: UUID = UUID()
+public struct ParsedCursor: Identifiable, Codable {
+    public var id: UUID = UUID()
     var sourceFileName: String
     /// Individual animation frames (1 frame for static `.cur`, N frames for `.ani`) encoded as PNG Data
     var framePNGs: [Data]
@@ -323,7 +323,7 @@ struct ParsedCursor: Identifiable, Codable {
     /// Duration of each frame in seconds (`0` for static cursors)
     var frameDuration: Double
 
-    var frameCount: Int {
+    public var frameCount: Int {
         max(1, framePNGs.count)
     }
 
@@ -377,9 +377,9 @@ enum CursorPointSizePreset: Double, CaseIterable, Codable, Identifiable {
 }
 
 /// Complete cursor theme containing mapped roles and metadata
-struct CursorTheme: Identifiable, Codable {
-    var id: UUID = UUID()
-    var name: String
+public struct CursorTheme: Identifiable, Codable {
+    public var id: UUID = UUID()
+    public var name: String
     var author: String
     var version: Double = 1.0
     var createdAt: Date = Date()
@@ -388,7 +388,7 @@ struct CursorTheme: Identifiable, Codable {
     /// Mapped cursors keyed by `CursorRole.rawValue`
     var cursors: [String: ParsedCursor] = [:]
 
-    func cursor(for role: CursorRole) -> ParsedCursor? {
+    public func cursor(for role: CursorRole) -> ParsedCursor? {
         cursors[role.rawValue]
     }
 
@@ -400,11 +400,11 @@ struct CursorTheme: Identifiable, Codable {
         }
     }
 
-    var assignedRolesCount: Int {
+    public var assignedRolesCount: Int {
         cursors.count
     }
 
-    var animatedRolesCount: Int {
+    public var animatedRolesCount: Int {
         cursors.values.filter { $0.isAnimated }.count
     }
 }

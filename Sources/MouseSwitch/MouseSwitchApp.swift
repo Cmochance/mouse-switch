@@ -128,6 +128,20 @@ struct MouseSwitchEntry {
                 print("  ❌ .cape 往返导入导出不一致")
                 return 1
             }
+            // 逐角色校验 .cape 往返结构保真度（帧数、时长、每帧非空）
+            for role in CursorRole.allCases {
+                guard let original = theme.cursor(for: role),
+                      let reimportedCursor = reimported.cursor(for: role) else {
+                    continue
+                }
+                guard original.frameCount == reimportedCursor.frameCount,
+                      abs(original.frameDuration - reimportedCursor.frameDuration) < 0.05,
+                      reimportedCursor.framePNGs.count == original.frameCount,
+                      reimportedCursor.framePNGs.allSatisfy({ !$0.isEmpty }) else {
+                    print("  ❌ .cape 往返保真度不一致: 角色 \(role.rawValue)")
+                    return 1
+                }
+            }
             print("  [3/4] 导出与重新解析 macOS .cape (1x/2x Retina 垂直精灵图) 验证通过")
 
             // 4. Verify SkyLight bridge availability & system backup

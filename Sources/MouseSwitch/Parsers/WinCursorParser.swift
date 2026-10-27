@@ -102,18 +102,18 @@ struct BinaryReader {
 }
 
 /// Pure-Swift parser for Windows `.cur` (static) and `.ani` (animated RIFF ACON) cursor files.
-enum WinCursorParser {
+public enum WinCursorParser {
     /// Maximum hardware cursor animation frames supported by macOS `CGSRegisterCursorWithImages`
-    static let maxMacOSFrames = 24
+    public static let maxMacOSFrames = 24
 
     /// Auto-detect and parse `.cur`, `.ani`, or `.ico` file from URL
-    static func parse(fileURL: URL) throws -> ParsedCursor {
+    public static func parse(fileURL: URL) throws -> ParsedCursor {
         let data = try Data(contentsOf: fileURL)
         return try parse(data: data, fileName: fileURL.lastPathComponent)
     }
 
     /// Auto-detect and parse `.cur`, `.ani`, or `.ico` from raw `Data`
-    static func parse(data: Data, fileName: String) throws -> ParsedCursor {
+    public static func parse(data: Data, fileName: String) throws -> ParsedCursor {
         guard data.count >= 12 else {
             throw CursorParseError.invalidHeader("文件过小 (\(data.count) bytes)")
         }

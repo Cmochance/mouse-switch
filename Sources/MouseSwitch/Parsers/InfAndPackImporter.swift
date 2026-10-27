@@ -15,10 +15,10 @@ enum ThemeImportError: LocalizedError {
 }
 
 /// Imports Windows cursor packs (folder, `install.inf`, individual `.cur`/`.ani`) or macOS `.cape` files into a `CursorTheme`.
-enum InfAndPackImporter {
+public enum InfAndPackImporter {
 
     /// Import from any file or directory URL
-    static func importFrom(url: URL) throws -> CursorTheme {
+    public static func importFrom(url: URL) throws -> CursorTheme {
         var isDir: ObjCBool = false
         FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir)
 
@@ -48,7 +48,7 @@ enum InfAndPackImporter {
     }
 
     /// Import an entire directory containing `.cur` / `.ani` files and optional `.inf` installer script
-    static func importDirectory(_ dirURL: URL, preferredInfURL: URL? = nil) throws -> CursorTheme {
+    public static func importDirectory(_ dirURL: URL, preferredInfURL: URL? = nil) throws -> CursorTheme {
         let fm = FileManager.default
         let contents = try fm.contentsOfDirectory(
             at: dirURL,
@@ -116,9 +116,8 @@ enum InfAndPackImporter {
         )
 
         for (role, fileURL) in mappedFileURLs {
-            if let parsed = try? WinCursorParser.parse(fileURL: fileURL) {
-                theme.setCursor(parsed, for: role)
-            }
+            let parsed = try WinCursorParser.parse(fileURL: fileURL)
+            theme.setCursor(parsed, for: role)
         }
 
         guard theme.assignedRolesCount > 0 else {

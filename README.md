@@ -57,3 +57,11 @@ open build/MouseSwitch.app
 # 一键恢复 macOS 系统默认鼠标光标
 ./build/MouseSwitch.app/Contents/MacOS/MouseSwitch --restore
 ```
+
+---
+
+## 已知限制与私有 API 风险
+
+- **`SkyLight.framework` 私有 API**：系统光标注入依赖通过 `dlopen` 动态绑定 `/System/Library/PrivateFrameworks/SkyLight.framework` 的 `CGSRegisterCursorWithImages` 等私有符号。该符号可能随 macOS 版本（Sonoma / Sequoia / Tahoe / macOS 27 等）变更而失效；使用私有 API 无法通过 App Store 审核，仅适合侧载或个人使用。若目标系统符号不可用，CLI 会返回错误并提示。
+- **免 SIP / 免 Root**：注入本身不要求关闭 SIP 或 Root 权限，但私有 API 调用仍可能受系统完整性保护与 Gatekeeper 审查，具体表现因 macOS 版本而异。
+- **架构支持**：当前构建脚本硬编码 `arm64-apple-macosx13.0`，暂不支持 Intel Mac；后续将迁移至 `swift build` 并支持通用架构。

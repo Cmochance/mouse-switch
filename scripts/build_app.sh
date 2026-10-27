@@ -7,28 +7,13 @@ APP_BUNDLE="$BUILD_DIR/MouseSwitch.app"
 MACOS_DIR="$APP_BUNDLE/Contents/MacOS"
 RESOURCES_DIR="$APP_BUNDLE/Contents/Resources"
 
-mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" /tmp/swift-module-cache
+rm -rf "$BUILD_DIR"
+mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
-echo "🔨 正在编译 MouseSwitch 原生 macOS 应用..."
-swiftc \
-    -disable-sandbox \
-    -module-cache-path /tmp/swift-module-cache \
-    -parse-as-library \
-    -target arm64-apple-macosx13.0 \
-    -O \
-    "$ROOT_DIR/Sources/MouseSwitch/Models/CursorModels.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Parsers/WinCursorParser.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Parsers/InfAndPackImporter.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Engine/CapeCoder.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Engine/SkyLightCursorBridge.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Generator/DemoWinCursorPackGenerator.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/ViewModels/AppViewModel.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Views/AnimatedCursorPreviewView.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Views/CursorRoleEditorSheet.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Views/CursorTestSandboxView.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/Views/MainWindowView.swift" \
-    "$ROOT_DIR/Sources/MouseSwitch/MouseSwitchApp.swift" \
-    -o "$MACOS_DIR/MouseSwitch"
+echo "🔨 正在用 SwiftPM 编译 MouseSwitch 原生 macOS 应用..."
+swift build -c release
+
+cp -f ".build/release/MouseSwitch" "$MACOS_DIR/MouseSwitch"
 
 cat > "$APP_BUNDLE/Contents/Info.plist" << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>

@@ -20,6 +20,10 @@ let package = Package(
                 .linkedFramework("ImageIO"),
                 .linkedFramework("UniformTypeIdentifiers")
             ]
+        ),
+        .testTarget(
+            name: "MouseSwitchTests",
+            dependencies: ["MouseSwitch"]
         )
     ]
 )

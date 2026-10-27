@@ -3,7 +3,7 @@ import CoreGraphics
 import ImageIO
 
 /// Handles vertical Sprite Sheet composition for macOS WindowServer and `.cape` (Mousecape Plist) import/export.
-enum CapeCoder {
+public enum CapeCoder {
 
     struct CompiledCursorPayload {
         let pointWidth: Double
@@ -173,14 +173,14 @@ enum CapeCoder {
         )
     }
 
-    static func exportCape(theme: CursorTheme, to url: URL) throws {
+    public static func exportCape(theme: CursorTheme, to url: URL) throws {
         let data = try exportCapeData(from: theme)
         try data.write(to: url, options: .atomic)
     }
 
     // MARK: - Import from `.cape`
 
-    static func importCape(from url: URL) throws -> CursorTheme {
+    public static func importCape(from url: URL) throws -> CursorTheme {
         let data = try Data(contentsOf: url)
         guard let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
               let cursorsDict = plist["Cursors"] as? [String: [String: Any]] else {
@@ -231,10 +231,11 @@ enum CapeCoder {
 
             var framePNGs: [Data] = []
             for i in 0..<frameCount {
-                // CGImage.cropping uses top-left origin
+                // Sprite sheet stacks frame 0 at TOP, frame N-1 at BOTTOM.
+                // CGImage.cropping origin is bottom-left, so invert Y to restore original frame order.
                 let cropRect = CGRect(
                     x: 0,
-                    y: i * frameH,
+                    y: (frameCount - 1 - i) * frameH,
                     width: frameW,
                     height: frameH
                 )
